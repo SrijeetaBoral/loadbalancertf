@@ -35,7 +35,7 @@ locals {
 data "aws_vpc" "this" {
   filter {
     name   = "tag:Name"
-    values = [local.vpc_name]
+    values = ["${var.project_id}-vpc"]
   }
 }
 
@@ -51,33 +51,33 @@ data "aws_subnet" "public_b" {
 
 data "aws_security_group" "ec2" {
   vpc_id = data.aws_vpc.this.id
-  name   = local.ec2_sg_name
+  name   = "${var.project_id}-ec2_sg"
 }
 
 data "aws_security_group" "http" {
   vpc_id = data.aws_vpc.this.id
-  name   = local.http_sg_name
+  name   = "${var.project_id}-http_sg"
 }
 
 data "aws_security_group" "lb" {
   vpc_id = data.aws_vpc.this.id
-  name   = local.lb_sg_name
+  name   = "${var.project_id}-sglb"
 }
 
 data "aws_ssm_parameter" "al2023_ami" {
-  name = "/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64"
+  name = var.ami
 }
 
 # ---------- Launch Template ----------
 resource "aws_launch_template" "this" {
-  name          = local.launch_template_name
+  name          = "${var.project_id}-template"
   image_id      = data.aws_ssm_parameter.al2023_ami.value
   instance_type = var.instance_type
-  key_name      = local.key_pair_name
+  key_name      = "${var.project_id}-keypair"
   user_data     = base64encode(local.user_data)
 
   iam_instance_profile {
-    name = local.instance_profile_name
+    name = "${var.project_id}-instance_profile"
   }
 
   network_interfaces {
@@ -107,7 +107,7 @@ resource "aws_launch_template" "this" {
 # ---------- Load Balancer ----------
 
 resource "aws_lb_target_group" "this" {
-  name     = local.tg_name
+  name     = "${var.project_id}-tg"
   port     = 80
   protocol = "HTTP"
   vpc_id   = data.aws_vpc.this.id
@@ -126,7 +126,7 @@ resource "aws_lb_target_group" "this" {
 }
 
 resource "aws_lb" "this" {
-  name               = local.lb_name
+  name               = "${var.project_id}-loadbalancer"
   load_balancer_type = "application"
   internal           = false
   security_groups    = [data.aws_security_group.lb.id]
@@ -151,7 +151,7 @@ resource "aws_lb_listener" "http" {
 
 #Auto Scaling Group 
 resource "aws_autoscaling_group" "this" {
-  name                = local.asg_name
+  name                = "${var.project_id}-asg"
   desired_capacity    = var.asg_desired_capacity
   min_size            = var.asg_min_size
   max_size            = var.asg_max_size

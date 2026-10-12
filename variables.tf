@@ -37,3 +37,8 @@ variable "asg_max_size" {
   description = "Maximum number of instances in the Auto Scaling Group"
   type        = number
 }
+
+variable "ami" {
+  description = "Amazon machine image"
+  type        = string
+}

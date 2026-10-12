@@ -6,3 +6,4 @@ public_subnet_b_cidr = "10.0.3.0/24"
 asg_desired_capacity = 2
 asg_min_size         = 1
 asg_max_size         = 2
+ami                  = "/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64"
