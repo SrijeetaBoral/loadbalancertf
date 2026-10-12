@@ -1,0 +1,7 @@
+@"
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+*.tfplan
+"@ | Out-File -Encoding ascii .gitignore

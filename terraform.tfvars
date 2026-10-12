@@ -1,0 +1,8 @@
+region               = "eu-west-1"
+project_id           = "cmtr-698agnc5"
+instance_type        = "t3.micro"
+public_subnet_a_cidr = "10.0.1.0/24"
+public_subnet_b_cidr = "10.0.3.0/24"
+asg_desired_capacity = 2
+asg_min_size         = 1
+asg_max_size         = 2
